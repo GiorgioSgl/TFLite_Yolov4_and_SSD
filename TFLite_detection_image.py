@@ -46,6 +46,8 @@ LABELMAP_NAME = args.labels
 min_conf_threshold = float(args.threshold)
 use_TPU = args.edgetpu
 
+colors=[(0,255,0),(0,0,255),(255,0,0),(255,128,0),(0,128,255)]
+
 # Parse input image name and directory. 
 IM_NAME = args.image
 IM_DIR = args.imagedir
@@ -138,9 +140,10 @@ for image_path in images:
     imH, imW, _ = image.shape 
     image_resized = cv2.resize(image_rgb, (width, height))
     input_data = np.expand_dims(image_resized, axis=0)
-
+    print(np.shape(input_data))
     # Normalize pixel values if using a floating model (i.e. if model is non-quantized)
     if floating_model:
+        print("yes")
         input_data = (np.float32(input_data) - input_mean) / input_std
 
     # Perform the actual detection by running the model with the image as input
@@ -164,19 +167,20 @@ for image_path in images:
             ymax = int(min(imH,(boxes[i][2] * imH)))
             xmax = int(min(imW,(boxes[i][3] * imW)))
             
-            cv2.rectangle(image, (xmin,ymin), (xmax,ymax), (10, 255, 0), 2)
+            col = colors[int(classes[i])%5]
+            cv2.rectangle(image, (xmin,ymin), (xmax,ymax), col, 1)
 
             # Draw label
             object_name = labels[int(classes[i])] # Look up object name from "labels" array using class index
             label = '%s: %d%%' % (object_name, int(scores[i]*100)) # Example: 'person: 72%'
-            labelSize, baseLine = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.7, 2) # Get font size
+            labelSize, baseLine = cv2.getTextSize(label, cv2.FONT_ITALIC, 0.5, 1) # Get font size
             label_ymin = max(ymin, labelSize[1] + 10) # Make sure not to draw label too close to top of window
-            cv2.rectangle(image, (xmin, label_ymin-labelSize[1]-10), (xmin+labelSize[0], label_ymin+baseLine-10), (255, 255, 255), cv2.FILLED) # Draw white box to put label text in
-            cv2.putText(image, label, (xmin, label_ymin-7), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 2) # Draw label text
+            cv2.rectangle(image, (xmin, label_ymin-labelSize[1]-10), (xmin+labelSize[0], label_ymin+baseLine-10), col, cv2.FILLED) # Draw white box to put label text in
+            cv2.putText(image, label, (xmin, label_ymin-7), cv2.FONT_ITALIC, 0.5, (255, 255, 255), 1) # Draw label text
 
     # All the results have been drawn on the image, now display the image
-    cv2.imshow('Object detector', image)
-
+    #cv2.imshow('Object detector', image)
+    cv2.imwrite("output.jpg",image)
     # Press any key to continue to next image, or press 'q' to quit
     if cv2.waitKey(0) == ord('q'):
         break
