@@ -2,7 +2,7 @@
 
 This github repository is fully insperd from [TFLite in raspberry](https://github.com/EdjeElectronics/TensorFlow-Lite-Object-Detection-on-Android-and-Raspberry-Pi/blob/master/Raspberry_Pi_Guide.md), I implememt the code to visualize the video and the image of the TOLOv4 TFLite, I convert the weight from the darknet framework to the TFLite with the usage of this [github repo](https://github.com/hunglc007/tensorflow-yolov4-tflite).
 
-I put all the weights model tested in this [drive folder](https://drive.google.com/drive/folders/1R9FvOpKk_CNUzLZpqp06GN1OENbjEbPR?usp=sharing), so you can skip the conversion and search of model in TFLite format step.
+I put all the weights model tested in this [drive folder](https://drive.google.com/drive/folders/1R9FvOpKk_CNUzLZpqp06GN1OENbjEbPR?usp=sharing), so you can skip the conversion and research of model in TFLite format step.
 
 | Model                 | FPS | mAP50-coco |
 |-----------------------|-----|------------|
