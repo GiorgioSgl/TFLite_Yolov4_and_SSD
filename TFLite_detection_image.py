@@ -31,10 +31,8 @@ parser.add_argument('--labels', help='Name of the labelmap file, if different th
                     default='labelmap.txt')
 parser.add_argument('--threshold', help='Minimum confidence threshold for displaying detected objects',
                     default=0.5)
-parser.add_argument('--image', help='Name of the single image to perform detection on. To run detection on multiple images, use --imagedir',
-                    default=None)
-parser.add_argument('--imagedir', help='Name of the folder containing images to perform detection on. Folder must contain only images.',
-                    default=None)
+parser.add_argument('--image', help='Name of the single image to perform detection on. To run detection on multiple images, use --imagedir',default='data/test1.jpg')
+parser.add_argument('--imagedir', help='Name of the folder containing images to perform detection on. Folder must contain only images.')
 parser.add_argument('--edgetpu', help='Use Coral Edge TPU Accelerator to speed up detection',
                     action='store_true')
 
@@ -57,9 +55,6 @@ if (IM_NAME and IM_DIR):
     print('Error! Please only use the --image argument or the --imagedir argument, not both. Issue "python TFLite_detection_image.py -h" for help.')
     sys.exit()
 
-# If neither an image or a folder are specified, default to using 'test1.jpg' for image name
-if (not IM_NAME and not IM_DIR):
-    IM_NAME = 'test1.jpg'
 
 # Import TensorFlow libraries
 # If tflite_runtime is installed, import interpreter from tflite_runtime, else import from regular tensorflow

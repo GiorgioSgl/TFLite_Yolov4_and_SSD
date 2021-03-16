@@ -33,7 +33,7 @@ parser.add_argument('--labels', help='Name of the labelmap file, if different th
 parser.add_argument('--threshold', help='Minimum confidence threshold for displaying detected objects',
                     default=0.5)
 parser.add_argument('--video', help='Name of the video file',
-                    default='test.mp4')
+                    default='data/test.mp4')
 parser.add_argument('--edgetpu', help='Use Coral Edge TPU Accelerator to speed up detection',
                     action='store_true')
 
@@ -113,6 +113,10 @@ input_std = 127.5
 video = cv2.VideoCapture(VIDEO_PATH)
 imW = video.get(cv2.CAP_PROP_FRAME_WIDTH)
 imH = video.get(cv2.CAP_PROP_FRAME_HEIGHT)
+fps_video = video.get(cv2.CAP_PROP_FPS)
+
+video_list = []
+colors=[(0,255,0),(0,0,255),(255,0,0),(255,128,0),(0,128,255)]
 
 while(video.isOpened()):
 
@@ -150,14 +154,15 @@ while(video.isOpened()):
             ymax = int(min(imH,(boxes[i][2] * imH)))
             xmax = int(min(imW,(boxes[i][3] * imW)))
             
-            cv2.rectangle(frame, (xmin,ymin), (xmax,ymax), (10, 255, 0), 2)
-
+            col = colors[int(classes[i])%5]
+            cv2.rectangle(frame, (xmin,ymin), (xmax,ymax), col, 1)
+	    
             # Draw label
             object_name = labels[int(classes[i])] # Look up object name from "labels" array using class index
             label = '%s: %d%%' % (object_name, int(scores[i]*100)) # Example: 'person: 72%'
             labelSize, baseLine = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.7, 2) # Get font size
             label_ymin = max(ymin, labelSize[1] + 10) # Make sure not to draw label too close to top of window
-            cv2.rectangle(frame, (xmin, label_ymin-labelSize[1]-10), (xmin+labelSize[0], label_ymin+baseLine-10), (255, 255, 255), cv2.FILLED) # Draw white box to put label text in
+            cv2.rectangle(frame, (xmin, label_ymin-labelSize[1]-10), (xmin+labelSize[0], label_ymin+baseLine-10), col, cv2.FILLED) # Draw white box to put label text in
             cv2.putText(frame, label, (xmin, label_ymin-7), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 2) # Draw label text
     
     #print fps
@@ -165,7 +170,7 @@ while(video.isOpened()):
     print("FPS: %.2f" % fps)
     # All the results have been drawn on the frame, so it's time to display it.
     cv2.imshow('Object detector', frame)
-    
+    video_list.append(frame)
     # Press 'q' to quit
     if cv2.waitKey(1) == ord('q'):
         break
@@ -174,3 +179,9 @@ while(video.isOpened()):
 video.release()
 cv2.destroyAllWindows()
 
+out = cv2.VideoWriter('output.mp4',cv2.VideoWriter_fourcc(*'mp4v'), fps_video-5, (int(imW),int(imH)))
+ 
+for i in range(len(video_list)):
+    #print("ciao")
+    out.write(video_list[i])
+out.release()
