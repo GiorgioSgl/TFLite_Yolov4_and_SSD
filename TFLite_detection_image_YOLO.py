@@ -180,7 +180,7 @@ for image_path in images:
             cv2.putText(image, label, (box_mins[0], label_ymin-7), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1) # Draw label text
 
     # All the results have been drawn on the image, now display the image
-    #cv2.imshow("detection",image)
+    cv2.imshow("detection",image)
     cv2.imwrite("output.jpg",image)
     # Press any key to continue to next image, or press 'q' to quit
     if cv2.waitKey(0) == ord('q'):
